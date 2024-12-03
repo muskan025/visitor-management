@@ -1,0 +1,38 @@
+
+form{
+ padding: 1.5rem;
+ width: 400px;
+}
+
+input{
+    padding: 0.5rem;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+input:focus{
+    border:1px solid var(--brand-clr);
+}
+
+select{
+    display: block;
+    padding: 1rem;
+    width:clamp(300px,400px,550px);
+    margin-bottom: 1rem;
+    background-color: #121212;
+    border-radius: 10px;
+    cursor: pointer;
+}
+ 
+select:focus{
+    border:1px solid var(--brand-clr);
+}
+
+@media (max-width:375px){
+    form{
+        width:100%;
+    }
+}

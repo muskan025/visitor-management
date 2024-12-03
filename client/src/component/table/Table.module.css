@@ -1,0 +1,109 @@
+
+.meetingLogs{
+    background-color: var(--bg-sec);
+    padding: 1rem;
+    margin-top: 3rem;
+    border-radius: 10px;
+    position: relative;
+    width: 100%;
+}
+ 
+thead th{
+    text-align: justify;
+}
+.emptyTable{
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    margin-top: 3rem;
+    font-size: large;
+    font-weight: 600;
+
+    svg{
+        stroke-width: 0.8;
+    }
+}
+
+.employeeTableRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 5px;
+    border-bottom: 0.3px solid grey;
+}
+
+.employeeTableBtns{
+    display: flex;
+    align-items: center;
+    gap:1.5rem;
+    padding-block: 0.5rem;
+}
+
+.status{
+    font-weight: bold;
+    text-transform: capitalize;
+}
+.checkTimeout svg{
+transition: all 0.2s ease;
+}
+.checkTimeout:hover svg{
+color:green;
+cursor: pointer;
+}
+.checkTimeout span{
+    cursor: pointer;
+    margin-right: 5px;
+}
+button{
+    padding: 4px 9px;
+}
+.blue{
+    background-color: #00800066;
+    margin-right: 1rem;
+}
+.red{
+    background-color: #ff000066;
+}
+
+.green{
+    background-color: #2d4aee66;
+}
+.yellow{
+    background-color: #ebee2d66;
+}
+.blueClr{
+    color: #2d4aee66;
+    margin-right: 1rem;
+}
+.redClr{
+    color: #ff000066;
+}
+.greenClr{
+    color: #0080007a;
+}
+.yellowClr{
+    color: #edf0397e;
+}
+.formTimeout{
+    position: relative;
+    z-index: 10;
+}
+.modalOverlay{
+    background-color: transparent;
+}
+@media (max-width:425px){
+
+    .employeeTableRow{
+        flex-direction: column;
+        row-gap: 1rem;
+    }
+    .meetingLogs{
+        font-size: 12px;
+    }
+}
+@media (max-width:325px){
+ 
+    .meetingLogs{
+        font-size: 7px;
+    }
+}

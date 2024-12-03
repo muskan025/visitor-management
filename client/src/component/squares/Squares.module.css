@@ -1,0 +1,7 @@
+
+.square{
+    position: absolute;
+    background-color: var(--brand-clr);
+    z-index: -1;
+    transform: rotate(45deg);
+}
