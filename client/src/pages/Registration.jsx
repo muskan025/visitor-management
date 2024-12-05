@@ -1,13 +1,12 @@
 import InputFeild from '../component/common/form/InputFeild'
 import useForm from '../hooks/useForm'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import DropDown from '../component/common/form/DropDown'
 import { toast } from 'react-toastify'
 import { baseURL } from '../constants'
 import axios from 'axios'
 import style from './styles/Auth.module.css'
-import Squares from '../component/squares/Squares'
-
+ 
 const Registration = () => {
 
   const { form, addUserDetails } = useForm()
@@ -42,8 +41,12 @@ const Registration = () => {
         <InputFeild type="tel" name="phone" label='contact number' value={form?.phone} handleChange={addUserDetails} />
         <DropDown name='role' handleChange={addUserDetails} options={['Employee', 'Receptionist']} />
         <br></br>
+        <div>
+        <span>Already have an account? </span>
+        <Link to='/login'><b>Login</b></Link>
+        </div>
         <button>Sign up</button>
-    
+
       </form>
    
     </main>

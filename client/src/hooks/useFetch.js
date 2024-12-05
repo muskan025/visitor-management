@@ -9,8 +9,7 @@ const useFetch = () => {
 
     async function fetchData(method,endpoint,setState,body,callback,clone){
         setIsLoading(true)
-         
-        console.log('fetch')
+ 
         try {
           const res = await axios[method](
             `${baseURL}/${endpoint}`,

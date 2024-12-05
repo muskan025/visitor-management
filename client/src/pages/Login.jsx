@@ -1,6 +1,6 @@
 import InputFeild from '../component/common/form/InputFeild'
 import useForm from '../hooks/useForm'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import axios from 'axios'
 import { baseURL } from '../constants'
 import { toast } from 'react-toastify'
@@ -18,7 +18,7 @@ const Login = () => {
             const res = await axios.post(`${baseURL}/employee/login`, form)
             const data = res.data
             const user = data.data
-            console.log(data)
+    
             const storedUser = {name:user?.name,email:user?.email,role:user?.role}
             
             if (data.status === 400) {
@@ -35,10 +35,10 @@ const Login = () => {
                 navigate(`/visitor-registration`)
             }
             else if (user.role === 'employee') {
-                navigate(`/employee-dashboard`)
+                navigate(`/${user.name}/employeedashboard`)
             }
             else if (user.role === 'admin') {
-                navigate(`/admin-dashboard`)
+                navigate(`/${user.name}/admindashboard`)
             }
 
         } catch (error) {
@@ -53,6 +53,10 @@ const Login = () => {
             <form onSubmit={handleLogin} className={style.auth}>
                 <InputFeild type="email" name="email" label='email' value={form?.email} handleChange={addUserDetails} />
                 <InputFeild type="password" name="password" label='password' value={form?.password} handleChange={addUserDetails} />
+                <div>
+                    <span>Create an account? </span>
+                    <Link to='/signup'><b>Signup</b></Link>
+                </div>
                 <button onClick={handleLogin}>Login</button>
             </form>
         </main>

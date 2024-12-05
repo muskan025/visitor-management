@@ -12,7 +12,7 @@ const ReceptionistDashboard = () => {
     const tableHeadings = ['Visitor','Employee','Time-In','Time-Out','Meeting Status']
     const user = JSON.parse(localStorage.getItem('activeUser')) 
 
-  useEffect(()=>{
+   useEffect(()=>{
     fetchData('post','visitor/visitors',setVisitors,{receptionist:user.email})
   },[])
   

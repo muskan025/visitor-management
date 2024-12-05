@@ -12,12 +12,12 @@ thead th{
     text-align: justify;
 }
 .emptyTable{
-    display: flex;
+    /* display: flex;
     gap: 1rem;
     align-items: baseline;
     margin-top: 3rem;
     font-size: large;
-    font-weight: 600;
+    font-weight: 600; */
 
     svg{
         stroke-width: 0.8;
@@ -25,18 +25,18 @@ thead th{
 }
 
 .employeeTableRow{
-    display: flex;
+    /* display: flex;
     justify-content: space-between;
     align-items: center;
     height: 48px;
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid grey; */
 }
 
 .employeeTableBtns{
-    display: flex;
+    /* display: flex;
     align-items: center;
     gap:1.5rem;
-    padding-block: 0.5rem;
+    padding-block: 0.5rem; */
 }
 
 .status{
@@ -97,8 +97,8 @@ button{
 @media (max-width:425px){
 
     .employeeTableRow{
-        flex-direction: column;
-        row-gap: 1rem;
+        /* flex-direction: column;
+        row-gap: 1rem; */
     }
     .meetingLogs{
         font-size: 12px;

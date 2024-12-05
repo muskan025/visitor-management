@@ -4,7 +4,6 @@ import { FaCheck, FaEdit } from "react-icons/fa";
 import { ImFilesEmpty } from "react-icons/im";
 import useFetch from '../../hooks/useFetch'
 import sendThankyouNote from '../../utils/feedbackForm';
-import { useState } from 'react';
 import Loader from '../common/Loader';
 
 const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemoveReceptionist, isLoading }) => {
@@ -58,7 +57,7 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                 <table className={style.meetingLogs}>
                     <thead>
                         {
-                            table !== 'employee' && tableHeadings.map((heading) => (
+                            tableHeadings.map((heading) => (
                                 <th key={heading} >{heading}</th>
                             ))
                         }
@@ -81,13 +80,13 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                                             {
                                                 timeOut ? <td className={style.edit} onClick={() => handleTimeOut(name, receptionist, email)}>
                                                     <span>{timeout}</span> &nbsp;
-                                                    {role === 'receptionist' &&  <FaEdit title='Reset timeout' aria-label='Reset Timeout' />}
-                                                    </td> :
-                                                   ( role === 'receptionist' ? <td className={style.checkTimeout} onClick={() => handleTimeOut(name, receptionist, email)}>
+                                                    {role === 'receptionist' && <FaEdit title='Reset timeout' aria-label='Reset Timeout' />}
+                                                </td> :
+                                                    (role === 'receptionist' ? <td className={style.checkTimeout} onClick={() => handleTimeOut(name, receptionist, email)}>
                                                         <span>Visitor Left</span> &nbsp;
-                                                       <FaCheck title='Set Timeout' aria-label='Set Timeout' />
+                                                        <FaCheck title='Set Timeout' aria-label='Set Timeout' />
                                                     </td> :
-                                                    <span>N/A</span>)
+                                                        <span>N/A</span>)
                                             }
                                             <td className={`${style.status} ${style[`${meetingStatus === 'accepted' ? 'greenClr' : (meetingStatus === 'rejected' ? 'redClr' : (meetingStatus === 'attended' ? 'blueClr' : 'yellowClr'))}`]}`}>{meetingStatus}</td>
                                         </tr>
@@ -111,14 +110,17 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                                         )
                                     }) : (
                                         tableData.length > 0 && tableData.map((user) => {
-                                            const { _id, name, meetingStatus } = user
+                                            const { _id, name, phone, email, meetingStatus } = user
                                             return (
+                                                <>
                                                 <tr key={_id} className={style.employeeTableRow}>
                                                     <td>{name}</td>
-                                                    {meetingStatus && meetingStatus !== 'Pending' ?
-                                                        <td className={`${style.status} ${style[`${meetingStatus === 'accepted' ? 'greenClr' : (meetingStatus === 'rejected' ? 'redClr' : (meetingStatus === 'attended' ? 'blueClr' : 'yellowClr'))}`]}`}>{user.meetingStatus}</td> :
+                                                    <td>{phone}</td>
+                                                    <td>{email}</td>
+                                                   
+                                                        <td className={`${style.status} ${style[`${meetingStatus === 'accepted' ? 'greenClr' : (meetingStatus === 'rejected' ? 'redClr' : (meetingStatus === 'attended' ? 'blueClr' : 'yellowClr'))}`]}`}>{user.meetingStatus}</td> 
+                                                        {meetingStatus && meetingStatus === 'Pending' &&
                                                         <td className={style.employeeTableBtns} >
-
                                                             <td>
                                                                 <button onClick={() => checkMeetingStatus(user.name, 'accepted')} className={style.green} aria-label='Except Meeting' >Accept</button>&nbsp;&nbsp;
                                                                 <button onClick={() => checkMeetingStatus(user.name, 'rejected')} className={style.red} aria-label='Reject Meeting'>Reject</button>
@@ -127,6 +129,8 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
 
                                                         </td>}
                                                 </tr>
+                                                <br></br>
+                                                </>
                                             )
                                         })
                                     )
@@ -146,4 +150,3 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
 
 export default Table
 
-// style={{ color: meetingStatus === 'accepted' ? '#00800066' : (meetingStatus === 'rejected' ? '#ff000066' :(meetingStatus === 'accepted' ? '#2d4aee66' : 'yellow')) }} 

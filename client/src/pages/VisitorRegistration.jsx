@@ -12,6 +12,7 @@ const VisitorRegistration = () => {
   const [employees, setEmployees] = useState([])
   const [visitors, setVisitors] = useState([])
   const user = JSON.parse(localStorage.getItem('activeUser')) 
+  
 
   function handleRegister(e) {
     e.preventDefault()

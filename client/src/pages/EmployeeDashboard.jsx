@@ -4,14 +4,12 @@ import useFetch from '../hooks/useFetch'
 
 const EmployeeDashboard = () => {
 
-  const tableHeadings = ['Visitor','Request','Status']
+  const tableHeadings = ['Visitor','Contact No.','Email','Request','Status']
   const [visitors,setVisitors] = useState([])
   const {fetchData,isLoading} = useFetch()
 
  async function checkMeetingStatus(visitor,status){
-
   fetchData('post','visitor/meeting-status','',{visitor,status})
-
   }
 
   useEffect(()=>{

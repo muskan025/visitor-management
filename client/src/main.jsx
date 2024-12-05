@@ -10,6 +10,7 @@ import AdminDashboard from './pages/AdminDashboard.jsx'
 import VisitorRegistration from './pages/VisitorRegistration.jsx'
 import ReceptionistDashboard from './pages/ReceptionistDashboard.jsx'
 import EmployeeDashboard from './pages/EmployeeDashboard.jsx'
+import ProtectedRoutes from './component/ProtectedRoutes.jsx'
 
 const router = createBrowserRouter([{
   path: '/',
@@ -28,28 +29,33 @@ const router = createBrowserRouter([{
       path: '/login',
       element: <Login />,
     },
-
     {
       path: '/visitor-registration',
       element: <VisitorRegistration />,
     },
     {
-      path: '/receptionist-dashboard',
-      element: <ReceptionistDashboard />,
+      path: '/',
+      element: <ProtectedRoutes/>,
+      children:[
+        {
+          path: ':receptionist/receptionistdashboard',
+          element: <ReceptionistDashboard />,
+        },
+        {
+          path: ':employee/employeedashboard',
+          element: <EmployeeDashboard />,
+        },
+        {
+          path: ':admin/admindashboard',
+          element: <AdminDashboard />,
+        },
+      ]
     },
-    {
-      path: '/employee-dashboard',
-      element: <EmployeeDashboard />,
-    },
-    {
-      path: '/admin-dashboard',
-      element: <AdminDashboard />,
-    },
+
+    
   ]
 }])
 
 createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}>
-    <App />
-  </RouterProvider>,
+  <RouterProvider router={router}/>
 )
