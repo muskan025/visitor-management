@@ -13,6 +13,7 @@ const AdminDashboard = () => {
 
   const [receptionist, setReceptionist] = useState([])
   const [visitor, setVisitor] = useState([])
+  const [visitorStatus, setVisitorStatus] = useState([])
   const [visitorClone, setVisitorClone] = useState([])
   const { form, addUserDetails } = useForm()
   const [isOpen, setIsOpen] = useState(false)
@@ -32,15 +33,8 @@ const AdminDashboard = () => {
     {
       type: 'number',
       name: 'Year',
-      placeholder: getYear(),
     },
   ]
-
-  function getYear() {
-    const date = new Date()
-    const year = date.getFullYear()
-    return year
-  }
 
   function handleRemoveReceptionist(id) {
     fetchData('post', 'employee/remove-receptionist', setReceptionist, {id})
@@ -92,15 +86,15 @@ const AdminDashboard = () => {
     })
    
     setVisitor(logs)
+    setVisitorStatus(logs)
  
   }
 
   function filterMeetingStatus(status) {
     let logs = []
-
     if (status !== 'all') {
-      logs = visitorClone.filter((vis) => (
-        vis.meetingStatus === status.toLowerCase()
+      logs = visitorStatus.filter((vis) => (
+        vis.meetingStatus.toLowerCase() === status.toLowerCase()
       ))
       setVisitor(logs)
     }
@@ -120,13 +114,13 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchData('get', 'employee/receptionists', setReceptionist) 
-  },[isOpen])
+  },[])
 
   return (
     <main className={style.admin}>
       <form action="" className={style.dropdowns}>
         <DropDown name='role logs' handleChange={addUserDetails} options={['Visitor Table', 'Receptionist Table']} />
-        <DropDown name='status' dropdown='sort' handleChange={addUserDetails} handleFilter={filterMeetingStatus} options={['Attended', 'Accepted', 'Rejected', 'All']} />
+        <DropDown name='status' dropdown='sort' handleChange={addUserDetails} handleFilter={filterMeetingStatus} options={['Attended', 'Accepted', 'Rejected','Pending', 'All']} />
         <div className={style.dateDropdown} >
           <div className={style.dropdownHeader}>
             <p>Sort Period</p>

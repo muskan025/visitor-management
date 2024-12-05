@@ -2,6 +2,7 @@
 nav{
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 1rem;
     position: fixed;
     top:0;
@@ -24,4 +25,51 @@ nav a{
     display: flex;
     justify-content: flex-end;
     gap:1rem;
+}
+
+.hamburger{
+    display: none;
+}
+@media screen and (max-width:786px){
+    nav{
+        padding: 0.5rem;
+    }
+    .menuOpen{
+        visibility: hidden;
+        transition: visibility 0.1s ease;
+    }
+    .menuOpen{
+        justify-content: space-evenly;
+        flex-direction: column;
+        visibility: visible;
+        background-color: var(--bg-sec);
+        opacity: 0.9;
+        padding: 3px;
+        width: max-content;
+        position: absolute;
+        padding: 2rem;
+        top:50px;
+        right:0;
+        border-radius: 10px;
+        height: 100vh;
+    }
+    .menuClose{
+        display: none;
+    }
+
+    .hamburger, .close{
+        position: relative;
+        margin: 16px;
+        font-size: clamp(12px, 20px, 25px);
+        cursor: pointer;
+    }
+.hamburger{
+    display: block;
+    transition: all 0.4s ease;
+}
+.close{
+    display:block;
+    transition: all 0.4s ease;
+}
+
 }

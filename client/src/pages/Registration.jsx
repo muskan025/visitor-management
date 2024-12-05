@@ -33,7 +33,7 @@ const Registration = () => {
 
   return (
     <main>
-      <p className='heading'>Register</p>
+      <p className='heading'>Sign up</p>
  
       <form onSubmit={handleRegister} className={style.auth}>
         <InputFeild type="text" name="name" label='name' value={form?.name} handleChange={addUserDetails} />
@@ -42,7 +42,7 @@ const Registration = () => {
         <InputFeild type="tel" name="phone" label='contact number' value={form?.phone} handleChange={addUserDetails} />
         <DropDown name='role' handleChange={addUserDetails} options={['Employee', 'Receptionist']} />
         <br></br>
-        <button>Register</button>
+        <button>Sign up</button>
     
       </form>
    

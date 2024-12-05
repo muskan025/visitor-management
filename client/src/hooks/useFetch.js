@@ -9,8 +9,8 @@ const useFetch = () => {
 
     async function fetchData(method,endpoint,setState,body,callback,clone){
         setIsLoading(true)
-      console.log(method)
-
+         
+        console.log('fetch')
         try {
           const res = await axios[method](
             `${baseURL}/${endpoint}`,
@@ -18,7 +18,7 @@ const useFetch = () => {
             { withCredentials: true ,
             })
           const data = res.data 
-         
+        
         if(data.status === 200 || data.status === 201){
             if(setState){
               setState(data.data)
