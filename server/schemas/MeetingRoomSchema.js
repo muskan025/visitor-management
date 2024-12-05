@@ -10,8 +10,10 @@ const  meetingRoomSchema = Schema({
         type: String,
         required: true,
     },
-    
-
+    visitorId:{
+        type:Schema.Types.ObjectId,    
+        ref:"visitor"
+    },
 })
 
 module.exports = mongoose.model("meetingRoom",meetingRoomSchema)

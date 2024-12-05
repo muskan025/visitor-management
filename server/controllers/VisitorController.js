@@ -12,7 +12,7 @@ VisitorRouter.post('/register', async (req, res) => {
       await validateVisitorCredentials({name,email,receptionist,phone});
     } catch (error) {
         console.log(error)
-      return res.send({
+      return res.send({ 
         status: 400,
         message: error,
       });
@@ -48,7 +48,6 @@ VisitorRouter.post('/register', async (req, res) => {
 VisitorRouter.post('/visitors',async(req,res)=>{
      
     const {receptionist} = req.body
-    console.log('visitor',req.body)
 
     try {
         const visitorDB = await Visitor.getVisitorByReceptionist(receptionist)
@@ -168,21 +167,23 @@ VisitorRouter.post('/timeout',async(req,res)=>{
 
     const {visitor} = req.body
  
+   
     if(!visitor){
-        return res.send({
+        return res.send({ 
             status:400,
             message:"Missing Data"
         })
-    }
-
+    } 
+ 
     try {
         const visitorDB = await Visitor.addVisitorTimeout({visitor})
-
+ 
         return res.send({
-            status:200,
-            data:visitorDB
+            status:200, 
+            data:visitorDB,
+            message:'Timeout Recorded'
         })
-    } catch (error) {
+    } catch (error) { 
         console.log(error)
         return res.send({
             status:500,
