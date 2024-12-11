@@ -9,10 +9,25 @@ import Modal from '../component/Modal/Modal'
 import useFetch from '../hooks/useFetch'
 import { FaUserPlus } from 'react-icons/fa'
 import { RxCaretDown } from "react-icons/rx";
+import { dateTimeForCalander } from '../utils/calendar'
 const AdminDashboard = () => {
 
+  const meetingRooms =[
+    { name: "Innovation Hub", capacity: 2},
+    { name: "Everest Conference Room", capacity: 12 },
+    { name: "Silicon Valley", capacity: 8 },
+    { name: "Zen Garden", capacity: 6 },
+    { name: "Galileo Room", capacity: 10 },
+    { name: "Startup Lounge", capacity: 15 },
+    { name: "Pacific Conference Room", capacity: 25 },
+    { name: "Einstein Boardroom", capacity: 16 },
+    { name: "Global Connect", capacity: 18 },
+    { name: "Creative Corner", capacity: 6 },
+    { name: "All"},
+];
+
+  const [meetings, setMeetings] = useState({})
   const [receptionist, setReceptionist] = useState([])
-  const [visitor, setVisitor] = useState([])
   const [visitorStatus, setVisitorStatus] = useState([])
   const [visitorClone, setVisitorClone] = useState([])
   const { form, addUserDetails } = useForm()
@@ -20,7 +35,7 @@ const AdminDashboard = () => {
   const { fetchData, isLoading } = useFetch()
   const [isDateDropdown, setIsDateDropdown] = useState(false)
 
-  const visitorHeadings = ['Visitor', 'Employee', 'Time-In', 'Time-Out', 'Meeting Status']
+  const visitorHeadings = ['Visitor', 'Employee', 'Time-In', 'Time-Out', 'Meeting Status', 'Meeting Room']
   const dateArray = [
     {
       type: 'date',
@@ -85,21 +100,38 @@ const AdminDashboard = () => {
       }
     })
    
-    setVisitor(logs)
+    setMeetings((prev)=>({...prev,meetings:[...logs]}))
     setVisitorStatus(logs)
  
   }
 
   function filterMeetingStatus(status) {
     let logs = []
+  
     if (status !== 'all') {
       logs = visitorStatus.filter((vis) => (
         vis.meetingStatus.toLowerCase() === status.toLowerCase()
       ))
-      setVisitor(logs)
+      setMeetings((prev)=>({...prev,meetings:[...logs]}))
     }
     else {
-      setVisitor(visitorClone)
+      setMeetings((prev)=>({...prev,meetings:[...visitorClone]}))
+    }
+
+  }
+
+  function filterMeetingRoom(roomname) {
+    let logs = []
+ 
+    if (roomname.toLowerCase() !== 'all') {
+      logs = visitorClone.filter((vis) => {
+         return vis?.meetingID?.roomName?.toLowerCase() === roomname.toLowerCase()
+    })
+    
+      setMeetings((prev)=>({...prev,meetings:[...logs]}))
+    }
+    else {
+      setMeetings((prev)=>({...prev,meetings:[...visitorClone]}))
     }
 
   }
@@ -109,18 +141,25 @@ const AdminDashboard = () => {
   }
 
   useEffect(() => {
-    fetchData('get', 'visitor/visitors', setVisitor, '', '', setVisitorClone)
+    const date = new Date()
+    const time = '06:00 am'
+    const timeRange = dateTimeForCalander(date, time, 'admin')
+    console.log(timeRange)  
+
+     fetchData('post', 'meeting-room/getmeetings', setMeetings, { dateTimeStart: timeRange.start, dateTimeEnd: timeRange.end,allreceptionists:true},'',setVisitorClone,setVisitorStatus)
   }, [])
 
   useEffect(() => {
     fetchData('get', 'employee/receptionists', setReceptionist) 
   },[])
 
+
   return (
     <main className={style.admin}>
       <form action="" className={style.dropdowns}>
         <DropDown name='role logs' handleChange={addUserDetails} options={['Visitor Table', 'Receptionist Table']} />
         <DropDown name='status' dropdown='sort' handleChange={addUserDetails} handleFilter={filterMeetingStatus} options={['Attended', 'Accepted', 'Rejected','Pending', 'All']} />
+        <DropDown name='meetingroom' dropdown='sort' handleChange={addUserDetails} handleFilter={filterMeetingRoom} options={meetingRooms} />
         <div className={style.dateDropdown} >
           <div className={style.dropdownHeader}>
             <p>Sort Period</p>
@@ -163,7 +202,7 @@ const AdminDashboard = () => {
 
         </form> :
 
-        <Table tableHeadings={visitorHeadings} tableData={visitor} table='visitor' isLoading={isLoading} />
+        <Table tableHeadings={visitorHeadings} tableData={meetings?.meetings} events={meetings?.events} table='visitor' isLoading={isLoading} />
 
       }
       {isOpen &&

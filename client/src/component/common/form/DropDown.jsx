@@ -1,14 +1,11 @@
 /* eslint-disable react/prop-types */
 
-import InputFeild from "./InputFeild"
-
-
-const DropDown = ({ name, options, handleChange, dropdown, handleFilter, date = false }) => {
+const DropDown = ({ name, options, handleChange, dropdown, handleFilter}) => {
 
   function handleDropdown(e) {
     handleChange(e)
     if (dropdown === 'sort') {
-      handleFilter(e.target.value)
+       handleFilter(e.target.value)
     }
   }
 
@@ -17,8 +14,8 @@ const DropDown = ({ name, options, handleChange, dropdown, handleFilter, date = 
       <option value={name} hidden  >{`${dropdown === 'sort' ? 'Sort' : 'Select'} ${name}`}</option>
       {
         options.length > 0 && options.map((option) => (
-          <option key={option} value={option.toLowerCase()} >
-            {option}
+          <option key={option.name ? option.name : option} value={option.name ? option.name : option.toLowerCase()} >
+            {option.name ? option.name : option}
           </option>
         ))
       }

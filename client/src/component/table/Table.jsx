@@ -5,9 +5,11 @@ import { ImFilesEmpty } from "react-icons/im";
 import useFetch from '../../hooks/useFetch'
 import sendThankyouNote from '../../utils/feedbackForm';
 import Loader from '../common/Loader';
+import { dateTimeForCalander } from '../../utils/calendar';
 
-const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemoveReceptionist, isLoading }) => {
-
+const Table = ({ tableHeadings, tableData,events, checkMeetingStatus, table, handleRemoveReceptionist, isLoading }) => {
+ 
+ 
     const { fetchData } = useFetch()
     const user = JSON.parse(localStorage.getItem('activeUser'))
     const role = user.role
@@ -23,11 +25,8 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
         let mins = time.getMinutes()
         let meridiem = ''
 
-        if (hrs > 12) {
+        if (hrs >= 12) {
             hrs = hrs - 12
-            if (hrs <= 9) {
-                hrs = `0${hrs}`
-            }
             meridiem = ' PM'
         }
         else if (hrs === 12) {
@@ -40,7 +39,10 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
         else {
             meridiem = ' AM'
         }
-
+         
+        if (hrs <= 9) {
+            hrs = `0${hrs}`
+        }
         if (mins <= 9) {
             mins = `0${mins}`
         }
@@ -50,10 +52,18 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
 
     }
 
+    function toTitleCase(str) {
+        return str
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+ 
+
     return (
 
         isLoading ? <Loader /> : (
-            tableData.length > 0 ?
+            tableData?.length > 0 ?
                 <table className={style.meetingLogs}>
                     <thead>
                         {
@@ -65,11 +75,20 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                     <br></br>
                     <tbody>
                         {
-                            table === 'visitor' ? tableData.length > 0 && tableData.map((user) => {
-                                const { _id, name, email, receptionist, assignedEmployee, timeIn, timeOut, meetingStatus } = user
+                            table === 'visitor' ? tableData.length > 0 && tableData.map((item) => {
+                                let { _id, name, email, receptionist, assignedEmployee, timeIn, timeOut, meetingStatus } = item
+                                const meetingStartTime = new Date(item?.meetingID?.startTime);
+                                 const meetingEndTime = new Date(item?.meetingID?.endTime);
+                                const currentTime = new Date()
 
+                                if(currentTime >= meetingStartTime && currentTime <= meetingEndTime){
+                                    meetingStatus = 'Ongoing'
+                                }
+                                 
                                 const timein = modifyTimeFormat(timeIn)
                                 const timeout = modifyTimeFormat(timeOut)
+                                name = name && toTitleCase(name)
+                                assignedEmployee = assignedEmployee && toTitleCase(assignedEmployee)
 
                                 return (
                                     <>
@@ -78,10 +97,10 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                                             <td>{assignedEmployee}</td>
                                             <td>{timein}</td>
                                             {
-                                                timeOut ? <td className={style.edit} onClick={() => handleTimeOut(name, receptionist, email)}>
+                                                timeOut ? (role === 'receptionist' ?( <td className={style.edit} onClick={() => handleTimeOut(name, receptionist, email)}>
                                                     <span>{timeout}</span> &nbsp;
-                                                    {role === 'receptionist' && <FaEdit title='Reset timeout' aria-label='Reset Timeout' />}
-                                                </td> :
+                                                    <FaEdit title='Reset timeout' aria-label='Reset Timeout' />
+                                                </td>) : <span>{timeout}</span>) :
                                                     (role === 'receptionist' ? <td className={style.checkTimeout} onClick={() => handleTimeOut(name, receptionist, email)}>
                                                         <span>Visitor Left</span> &nbsp;
                                                         <FaCheck title='Set Timeout' aria-label='Set Timeout' />
@@ -89,6 +108,34 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                                                         <span>N/A</span>)
                                             }
                                             <td className={`${style.status} ${style[`${meetingStatus === 'accepted' ? 'greenClr' : (meetingStatus === 'rejected' ? 'redClr' : (meetingStatus === 'attended' ? 'blueClr' : 'yellowClr'))}`]}`}>{meetingStatus}</td>
+                                        { 
+                                            events?.length > 0 ? (
+                                                (() => {
+                                                    const matchingEvent = events.find((event) => {
+                                                        const { roomname, start } = event;
+                                                        
+                                                        const startTime = dateTimeForCalander(meetingStartTime, '', 'today', false);
+                                                        
+                                                        return (
+                                                            roomname === item?.meetingID?.roomName && 
+                                                             start.dateTime === startTime 
+                                                        );
+                                                    });
+                                            
+                                                    return matchingEvent ? (
+                                                        <a 
+                                                            href={matchingEvent.eventLink} 
+                                                            key={matchingEvent.id} 
+                                                            target='_blank' 
+                                                            
+                                                        >
+                                                            {matchingEvent.roomname}
+                                                        </a>
+                                                    ) : <td>Not Booked</td>;
+                                                })()
+                                            ) : <td>Not Booked</td>
+                                        }
+                                        
                                         </tr>
                                         <br></br>
                                     </>
@@ -109,8 +156,11 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                                             </tr>
                                         )
                                     }) : (
-                                        tableData.length > 0 && tableData.map((user) => {
-                                            const { _id, name, phone, email, meetingStatus } = user
+                                        tableData.length > 0 && tableData.map((visitor) => {
+                                            const { _id, name, phone, email, meetingStatus } = visitor
+                                            const meetingStartTime = visitor.meetingID.startTime
+                                            const meetingRoomname = visitor.meetingID.roomName
+                                           
                                             return (
                                                 <>
                                                 <tr key={_id} className={style.employeeTableRow}>
@@ -118,16 +168,45 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                                                     <td>{phone}</td>
                                                     <td>{email}</td>
                                                    
-                                                        <td className={`${style.status} ${style[`${meetingStatus === 'accepted' ? 'greenClr' : (meetingStatus === 'rejected' ? 'redClr' : (meetingStatus === 'attended' ? 'blueClr' : 'yellowClr'))}`]}`}>{user.meetingStatus}</td> 
-                                                        {meetingStatus && meetingStatus === 'Pending' &&
+                                                        <td className={`${style.status} ${style[`${meetingStatus === 'accepted' ? 'greenClr' : (meetingStatus === 'rejected' ? 'redClr' : (meetingStatus === 'attended' ? 'blueClr' : 'yellowClr'))}`]}`}>{meetingStatus}</td> 
+                                                        {meetingStatus && meetingStatus === 'Pending' ?
                                                         <td className={style.employeeTableBtns} >
                                                             <td>
-                                                                <button onClick={() => checkMeetingStatus(user.name, 'accepted')} className={style.green} aria-label='Except Meeting' >Accept</button>&nbsp;&nbsp;
-                                                                <button onClick={() => checkMeetingStatus(user.name, 'rejected')} className={style.red} aria-label='Reject Meeting'>Reject</button>
+                                                                <button onClick={() => checkMeetingStatus(name, 'accepted')} className={style.green} aria-label='Except Meeting' >Accept</button>&nbsp;
+                                                                <button onClick={() => checkMeetingStatus(name, 'rejected')} className={style.red} aria-label='Reject Meeting'>Reject</button>&nbsp;
                                                             </td>
-                                                            <td><button onClick={() => checkMeetingStatus(user.name, 'attended')} className={style.blue} aria-label='Attended Meeting'>Attended</button></td>
+                                                            <td><button onClick={() => checkMeetingStatus(name, 'attended')} className={style.blue} aria-label='Attended Meeting'>Attended</button></td>
 
-                                                        </td>}
+                                                        </td> : <td>N/A</td>}
+                                                        { 
+                                            events?.length > 0 ? (
+                                                (() => {
+                                                  
+                                                    const matchingEvent = events.find((event) => {
+                                                        const { roomname, start } = event;
+                                                        
+                                                        const startTime = dateTimeForCalander(meetingStartTime, '', 'today', false);
+                                                         
+                                                        return (
+                                                            roomname === meetingRoomname && 
+                                                             start.dateTime === startTime 
+                                                        );
+                                                    });
+                                            
+                                                    return matchingEvent ? (
+                                                        <a 
+                                                            href={matchingEvent.eventLink} 
+                                                            key={matchingEvent.id} 
+                                                            target='_blank' 
+                                                             
+                                                        >
+                                                            {matchingEvent.roomname}
+                                                        </a>
+                                                    ) :  <td>Not Booked</td>;
+                                                })()
+                                            ) : <td>Not Booked</td>
+                                        }
+
                                                 </tr>
                                                 <br></br>
                                                 </>
@@ -139,11 +218,11 @@ const Table = ({ tableHeadings, tableData, checkMeetingStatus, table, handleRemo
                     </tbody>
                 </table> :
                 <div className={style.emptyTable}>
-                    <ImFilesEmpty />
-                    <p>No Data To  Show</p>
+                    <ImFilesEmpty />&nbsp;
+                    <span>No Data To  Show</span>
                 </div>
         )
-
+ 
 
     )
 }
